@@ -17,14 +17,17 @@ let points = 0
 startBtn.addEventListener("click", (e) => {
   e.preventDefault()
 
-  if (
-    !squareVerticalInput.value.trim().length ||
-    !squareHorizontalInput.value.trim().length
-  )
+  const vertical = squareVerticalInput.value.trim()
+  const horizontal = squareHorizontalInput.value.trim()
+  const MAX_HEIGHT = Number(vertical)
+  const MAX_WIDTH = Number(horizontal)
+
+  if (!vertical.length || !horizontal.length)
     return alert("Nie podałeś wartości")
 
-  const MAX_HEIGHT = Number(squareVerticalInput.value)
-  const MAX_WIDTH = Number(squareHorizontalInput.value)
+  if ((MAX_HEIGHT * MAX_WIDTH) % 2 !== 0)
+    return alert("Ilość kart musi być parzysta")
+
   const images = getRandomImages(MAX_HEIGHT * MAX_WIDTH)
 
   for (let i = 0; i < MAX_HEIGHT; i++) {
@@ -34,7 +37,7 @@ startBtn.addEventListener("click", (e) => {
       const element = `
       <div class="card card-${i * MAX_WIDTH + j}">
         <div class="front">
-          <img src="./assets/reversed.png" alt="" />
+          <img src="./assets/reversed.png" alt="reversed card" />
         </div>
         <div class="back">
           <img src="./assets/${images.pop()}.png" alt="" />
@@ -92,3 +95,17 @@ const startGame = () => {
     })
   })
 }
+
+const apiTest = async () => {
+  const test = { boardWidth: 2, boardHeight: 3, nick: "arturek", score: 997 }
+  // const data = await fetch("http://localhost:8080/records/", {
+  //   method: "POST",
+  //   body: JSON.stringify(test),
+  //   headers: { "Content-Type": "application/json" },
+  // })
+  const data = await fetch("http://localhost:8080/records/")
+  const data2 = await data.json()
+  console.log(data2)
+}
+
+apiTest()
