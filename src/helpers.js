@@ -1,4 +1,5 @@
 const IMAGES_COUNT = 10
+export const API_URL = "http://localhost:8080"
 
 const shuffle = (array) => {
   let currentIndex = array.length,
@@ -44,4 +45,22 @@ export const disableCards = (cards) => {
   const secondCard = document.querySelector(`.card-${cards[1]}`)
   firstCard.style.visibility = "hidden"
   secondCard.style.visibility = "hidden"
+}
+
+export const updateRanking = async (sortType) => {
+  const rankingList = document.querySelector("#ranking-list")
+  const select = document.querySelector("select")
+  let data
+  rankingList.innerHTML = "Ładowanie..."
+  // settingsForm.style.display = "none"
+  // rankingHolder.style.display = "block"
+
+  if (!sortType || !sortType.length) {
+    const response = await fetch(`${API_URL}/records/`)
+    data = await response.json()
+  } else {
+    const response = await fetch(`${API_URL}/records?sortType=${sortType}`)
+    data = await response.json()
+  }
+  console.log("sortType", sortType, "data", data)
 }

@@ -16,7 +16,8 @@ body {
   transition: all 0.5s;
 }
 
-input {
+input,
+select {
   padding: 0.2rem 0.5rem;
   border-radius: 3px;
   border: none;
@@ -30,7 +31,6 @@ form > button {
 
 main {
   padding: 3rem 5rem;
-
   margin: 10px 0;
 }
 
@@ -112,4 +112,92 @@ button:hover {
 
 .row {
   display: flex;
+}
+
+.scoreboard {
+  display: none;
+  flex-direction: column;
+  padding: 0.8rem 1rem;
+  gap: 5px;
+  text-align: center;
+}
+
+.summary {
+  text-align: center;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  width: 500px;
+  padding: 2rem 2rem;
+  border-radius: 3px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summary > h2 {
+  margin-bottom: 1rem;
+}
+
+.ranking-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background-color: hsl(51, 100%, 45%);
+}
+
+.ranking-button:hover {
+  background-color: hsl(51, 100%, 40%);
+}
+
+.settings-actions {
+  margin: 20px 0;
+}
+
+.settings-actions > button {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.ranking {
+  text-align: center;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  width: 500px;
+  padding: 2rem 2rem;
+  border-radius: 3px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.input-wrapper > select {
+  width: 100px;
+}
+
+.ranking-players {
+  margin-top: 15px;
+}
+
+ul {
+  list-style-type: none;
+}
+
+.ranking-players > h2 {
+  margin-bottom: 10px;
+}
+
+ul > li:not(:last-child) {
+  margin-bottom: 5px;
+}
+
+.ranking-actions {
+  margin-top: 40px;
 }

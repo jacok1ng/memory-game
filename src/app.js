@@ -1,4 +1,9 @@
-import { disableCards, getRandomImages, hideAllCards } from "./helpers.js"
+import {
+  API_URL,
+  disableCards,
+  getRandomImages,
+  hideAllCards,
+} from "./helpers.js"
 
 //Element holders
 const squareHorizontalInput = document.querySelector(
@@ -6,36 +11,131 @@ const squareHorizontalInput = document.querySelector(
 )
 const squareVerticalInput = document.querySelector("[name='square-vertical']")
 const startBtn = document.querySelector('button[name="start"]')
-const settingsForm = document.querySelector("form")
+const rankingBtn = document.querySelector('button[name="ranking-btn"]')
+const closeRankingBtn = document.querySelector('button[name="close-ranking"]')
+const saveScoreBtn = document.querySelector('button[name="save-score"]')
+const restartGameBtn = document.querySelector('button[name="restart-game"]')
+const nickInput = document.querySelector('input[name="nickname"]')
+const settingsForm = document.querySelector("#settings-form")
+const summaryHolder = document.querySelector(".summary")
 const boardHolder = document.querySelector("#board")
+const showedCardsHolder = document.querySelector("#showed-cards")
+const clickCounterHolder = document.querySelector("#clicks-counter")
+const scoreboardHolder = document.querySelector(".scoreboard")
+const rankingHolder = document.querySelector(".ranking")
+const select = document.querySelector("select")
 
 //Variables
 let reversedCards = 0
 let clickedCards = []
-let points = 0
+let clicks = 0
+let showedCards = 0
+let cardsOnStart = 0
+let boardWidth = 0
+let boardHeight = 0
+
+//Static variavles
+
+select.addEventListener("change", (e) => {
+  console.log("change", e)
+  console.log(select.value)
+})
+
+rankingBtn.addEventListener("click", async (e) => {
+  e.preventDefault()
+  const rankingList = document.querySelector("#ranking-list")
+  rankingList.innerHTML = "Ładowanie..."
+  settingsForm.style.display = "none"
+  rankingHolder.style.display = "block"
+
+  const response = await fetch(`${API_URL}/records/`)
+  const data = await response.json()
+  if (Array.isArray(data)) {
+    const options = data.reduce(
+      (acc, curr) =>
+        `${acc} <option value="${curr.size}">${curr.size}</option>`,
+      ""
+    )
+    select.innerHTML = options
+    const sortedPlayers = data[0].data.sort(
+      ({ score }, { score: scoreB }) => score - scoreB
+    )
+    const players = sortedPlayers.reduce(
+      (acc, curr, index) =>
+        `${acc}<li> <strong>${index + 1}.</strong> ${curr.nick} (${
+          curr.score
+        } Kliknięć)</li>`,
+      ""
+    )
+    rankingList.innerHTML = players
+    return
+  } else {
+    rankingList.innerHTML = "Brak wyników"
+  }
+})
+
+closeRankingBtn.addEventListener("click", (e) => {
+  e.preventDefault()
+  settingsForm.style.display = "flex"
+  rankingHolder.style.display = "none"
+})
+
+restartGameBtn.addEventListener("click", (e) => {
+  e.preventDefault()
+  restartGame()
+})
+
+saveScoreBtn.addEventListener("click", (e) => {
+  e.preventDefault()
+  const playerNick = nickInput.value.trim()
+
+  if (playerNick.length < 3 && playerNick.length < 16)
+    return alert("Twój nick musi zawierać od 3 do 15 znaków")
+
+  const data = {
+    boardWidth,
+    boardHeight,
+    nick: playerNick,
+    score: clicks,
+  }
+
+  fetch(`${API_URL}/records/`, {
+    body: JSON.stringify(data),
+    headers: { "Content-Type": "application/json" },
+    method: "POST",
+  })
+
+  restartGame()
+})
 
 startBtn.addEventListener("click", (e) => {
   e.preventDefault()
 
   const vertical = squareVerticalInput.value.trim()
   const horizontal = squareHorizontalInput.value.trim()
-  const MAX_HEIGHT = Number(vertical)
-  const MAX_WIDTH = Number(horizontal)
+  boardHeight = Number(vertical)
+  boardWidth = Number(horizontal)
 
   if (!vertical.length || !horizontal.length)
     return alert("Nie podałeś wartości")
 
-  if ((MAX_HEIGHT * MAX_WIDTH) % 2 !== 0)
+  if ((boardHeight * boardWidth) % 2 !== 0)
     return alert("Ilość kart musi być parzysta")
 
-  const images = getRandomImages(MAX_HEIGHT * MAX_WIDTH)
+  if (boardHeight * boardWidth > 36)
+    return alert("Maksymalna liczba kart to 36")
 
-  for (let i = 0; i < MAX_HEIGHT; i++) {
+  if (boardHeight * boardWidth < 4) return alert("Minimalna liczba kart to 4")
+
+  const images = getRandomImages(boardHeight * boardWidth)
+  cardsOnStart = boardHeight * boardWidth
+
+  for (let i = 0; i < boardHeight; i++) {
     const row = `<div class="row row-${i}"></div>`
     boardHolder.insertAdjacentHTML("beforeend", row)
-    for (let j = 0; j < MAX_WIDTH; j++) {
+    for (let j = 0; j < boardWidth; j++) {
       const element = `
-      <div class="card card-${i * MAX_WIDTH + j}">
+      <div class="card card-${i * boardWidth + j}">
         <div class="front">
           <img src="./assets/reversed.png" alt="reversed card" />
         </div>
@@ -50,11 +150,15 @@ startBtn.addEventListener("click", (e) => {
   }
 
   settingsForm.style.display = "none"
+  scoreboardHolder.style.display = "flex"
+  updateScoreboard()
   startGame()
 })
 
 const startGame = () => {
   const cards = document.querySelectorAll(".card")
+  boardHolder.style.display = "block"
+  clicks = 0
 
   cards.forEach((item, index) => {
     item.addEventListener("click", () => {
@@ -65,6 +169,8 @@ const startGame = () => {
         item.querySelector(".front").classList.add("reverse-front")
         item.querySelector(".back").classList.add("reverse-back")
         reversedCards++
+        clicks++
+        updateScoreboard()
 
         if (reversedCards == 2) {
           const firstCard = document.querySelector(
@@ -81,14 +187,18 @@ const startGame = () => {
           )
 
           if (firstPhotoIndex === secondPhotoIndex) {
-            points++
             disableCards(clickedCards)
+            showedCards += 2
+            updateScoreboard()
           }
 
           setTimeout(() => {
             hideAllCards()
             clickedCards = []
             reversedCards = 0
+            if (showedCards === cardsOnStart) {
+              endGame()
+            }
           }, 1000)
         }
       }
@@ -96,16 +206,30 @@ const startGame = () => {
   })
 }
 
-const apiTest = async () => {
-  const test = { boardWidth: 2, boardHeight: 3, nick: "arturek", score: 997 }
-  // const data = await fetch("http://localhost:8080/records/", {
-  //   method: "POST",
-  //   body: JSON.stringify(test),
-  //   headers: { "Content-Type": "application/json" },
-  // })
-  const data = await fetch("http://localhost:8080/records/")
-  const data2 = await data.json()
-  console.log(data2)
+const updateScoreboard = () => {
+  clickCounterHolder.innerHTML = `Ilość kliknięć: ${clicks}`
+  showedCardsHolder.innerHTML = `Odgadniętę karty: ${showedCards}/${cardsOnStart}`
 }
 
-apiTest()
+const endGame = () => {
+  const boardSize = document.querySelector("#board-size")
+  const summaryClick = document.querySelector("#summary-click")
+
+  reversedCards = 0
+  boardHolder.style.display = "none"
+  scoreboardHolder.style.display = "none"
+  summaryHolder.style.display = "flex"
+  boardSize.innerHTML = `Plansza: ${boardWidth}x${boardHeight}`
+  summaryClick.innerHTML = `Liczba kliknięć: ${clicks}`
+}
+
+const restartGame = () => {
+  summaryHolder.style.display = "none"
+  settingsForm.style.display = "flex"
+  boardHolder.innerHTML = ""
+  squareVerticalInput.value = ""
+  squareHorizontalInput.value = ""
+  nickInput.value = ""
+  showedCards = 0
+  squareVerticalInput.focus()
+}

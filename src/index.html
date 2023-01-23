@@ -17,12 +17,50 @@
   <body>
     <header>
       <h1><span>Memory Game</span></h1>
+      <div class="scoreboard">
+        <h3 id="clicks-counter">Ilość kliknięć: 3</h3>
+        <h3 id="showed-cards">Odgadniętę karty: 10/20</h3>
+      </div>
     </header>
     <main>
       <div id="board"></div>
-      <form>
+      <div class="ranking">
+        <div class="input-wrapper">
+          <label for="ranking-select"><h3>Wybierz rozmiar planszy</h3></label>
+          <select name="ranking-select">
+            <option>dupa</option>
+            <option>cyce</option>
+            <option>wadowice</option>
+          </select>
+        </div>
+        <div class="ranking-players">
+          <h2>Ranking:</h2>
+          <ul id="ranking-list">
+            <li>1. Jaca (20 kliknięć)</li>
+            <li>2. Łysy (25 kliknięć)</li>
+            <li>3. KML (30 kliknięć)</li>
+          </ul>
+        </div>
+        <div class="ranking-actions">
+          <button name="close-ranking">Zamknij</button>
+        </div>
+      </div>
+      <div class="summary">
+        <h2>Podsumowanie gry</h2>
+        <h3 id="board-size">Plansza: 5x5</h3>
+        <h3 id="summary-click">Liczba kliknięć: 12</h3>
+        <form id="save-score">
+          <input type="text" name="nickname" placeholder="Twój nick" />
+          <div class="actions">
+            <button name="save-score">Zapisz wynik</button>
+            <button name="restart-game">Restart gry</button>
+          </div>
+        </form>
+      </div>
+      <form id="settings-form">
         <input
           required
+          autofocus
           name="square-vertical"
           type="number"
           placeholder="Kafelki w pionie"
@@ -33,7 +71,13 @@
           type="number"
           placeholder="Kafelki w poziomie"
         />
-        <button name="start">Start</button>
+        <div class="settings-actions">
+          <button name="start">Start</button>
+          <button class="ranking-button" name="ranking-btn">
+            <img src="./assets/badge.png" alt="" />
+            <span>Ranking</span>
+          </button>
+        </div>
       </form>
     </main>
     <footer>
