@@ -40,6 +40,15 @@ export const hideAllCards = () => {
     item.querySelector(".back").classList.remove("reverse-back")
   })
 }
+
+export const showAllCards = () => {
+  const cards = document.querySelectorAll(".card")
+  cards.forEach((item) => {
+    item.querySelector(".front").classList.add("reverse-front")
+    item.querySelector(".back").classList.add("reverse-back")
+  })
+}
+
 export const disableCards = (cards) => {
   const firstCard = document.querySelector(`.card-${cards[0]}`)
   const secondCard = document.querySelector(`.card-${cards[1]}`)

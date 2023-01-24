@@ -3,6 +3,7 @@ import {
   disableCards,
   getRandomImages,
   hideAllCards,
+  showAllCards,
   updateRanking,
 } from "./helpers.js"
 
@@ -34,6 +35,7 @@ let showedCards = 0
 let cardsOnStart = 0
 let boardWidth = 0
 let boardHeight = 0
+let freezePlayer = false
 
 //Static variavles
 
@@ -142,8 +144,14 @@ startBtn.addEventListener("click", (e) => {
 
   settingsForm.style.display = "none"
   scoreboardHolder.style.display = "flex"
+  freezePlayer = true
   updateScoreboard()
   startGame()
+  showAllCards()
+  setTimeout(() => {
+    freezePlayer = false
+    hideAllCards()
+  }, 900)
 })
 
 const startGame = () => {
@@ -154,6 +162,7 @@ const startGame = () => {
   cards.forEach((item, index) => {
     item.addEventListener("click", () => {
       if (clickedCards.includes(index)) return
+      if (freezePlayer) return
 
       clickedCards.push(index)
       if (reversedCards < 2) {
