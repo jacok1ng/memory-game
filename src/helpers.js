@@ -1,5 +1,5 @@
 const IMAGES_COUNT = 10
-export const API_URL = "http://localhost:8080"
+export const API_URL = "http://localhost:3000"
 
 const shuffle = (array) => {
   let currentIndex = array.length,
@@ -49,18 +49,34 @@ export const disableCards = (cards) => {
 
 export const updateRanking = async (sortType) => {
   const rankingList = document.querySelector("#ranking-list")
-  const select = document.querySelector("select")
+  const settingsForm = document.querySelector("#settings-form")
+  const rankingHolder = document.querySelector(".ranking")
   let data
+
   rankingList.innerHTML = "Ładowanie..."
-  // settingsForm.style.display = "none"
-  // rankingHolder.style.display = "block"
+  settingsForm.style.display = "none"
+  rankingHolder.style.display = "block"
 
   if (!sortType || !sortType.length) {
     const response = await fetch(`${API_URL}/records/`)
     data = await response.json()
   } else {
-    const response = await fetch(`${API_URL}/records?sortType=${sortType}`)
+    const response = await fetch(`${API_URL}/records/${sortType}`)
     data = await response.json()
   }
-  console.log("sortType", sortType, "data", data)
+
+  if (Array.isArray(data)) {
+    console.log("cipka")
+    const sortedPlayers = data.sort(
+      ({ score }, { score: scoreB }) => score - scoreB
+    )
+    const players = sortedPlayers.reduce(
+      (acc, curr, index) =>
+        `${acc}<li> <strong>${index + 1}.</strong> ${curr.nick} (${
+          curr.score
+        } Kliknięć)</li>`,
+      ""
+    )
+    rankingList.innerHTML = players
+  } else rankingList.innerHTML = "Brak wyników"
 }

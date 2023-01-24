@@ -3,6 +3,7 @@ import {
   disableCards,
   getRandomImages,
   hideAllCards,
+  updateRanking,
 } from "./helpers.js"
 
 //Element holders
@@ -39,6 +40,7 @@ let boardHeight = 0
 select.addEventListener("change", (e) => {
   console.log("change", e)
   console.log(select.value)
+  updateRanking(select.value)
 })
 
 rankingBtn.addEventListener("click", async (e) => {
@@ -57,17 +59,8 @@ rankingBtn.addEventListener("click", async (e) => {
       ""
     )
     select.innerHTML = options
-    const sortedPlayers = data[0].data.sort(
-      ({ score }, { score: scoreB }) => score - scoreB
-    )
-    const players = sortedPlayers.reduce(
-      (acc, curr, index) =>
-        `${acc}<li> <strong>${index + 1}.</strong> ${curr.nick} (${
-          curr.score
-        } Kliknięć)</li>`,
-      ""
-    )
-    rankingList.innerHTML = players
+
+    updateRanking(data[0].size)
     return
   } else {
     rankingList.innerHTML = "Brak wyników"
