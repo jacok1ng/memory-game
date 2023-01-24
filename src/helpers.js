@@ -66,7 +66,6 @@ export const updateRanking = async (sortType) => {
   }
 
   if (Array.isArray(data)) {
-    console.log("cipka")
     const sortedPlayers = data.sort(
       ({ score }, { score: scoreB }) => score - scoreB
     )

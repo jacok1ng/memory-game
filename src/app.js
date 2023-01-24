@@ -38,8 +38,6 @@ let boardHeight = 0
 //Static variavles
 
 select.addEventListener("change", (e) => {
-  console.log("change", e)
-  console.log(select.value)
   updateRanking(select.value)
 })
 
