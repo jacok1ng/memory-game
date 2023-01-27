@@ -75,6 +75,11 @@ button:hover {
   margin: 10px;
 }
 
+.smaller-card {
+  width: 70px;
+  height: 70px;
+}
+
 .front,
 .back {
   position: absolute;
@@ -96,18 +101,15 @@ button:hover {
 }
 
 .back {
-  background-color: yellow;
   transform: rotateY(180deg);
 }
 
 .reverse-front {
   transform: rotateY(-180deg);
-  background-color: yellow;
 }
 
 .reverse-back {
   transform: rotateY(0deg);
-  background-color: yellow;
 }
 
 .row {

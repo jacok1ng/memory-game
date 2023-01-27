@@ -1,4 +1,4 @@
-const IMAGES_COUNT = 10
+const IMAGES_COUNT = 18
 export const API_URL = "http://localhost:3000"
 
 const shuffle = (array) => {

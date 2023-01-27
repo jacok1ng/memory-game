@@ -115,7 +115,7 @@ startBtn.addEventListener("click", (e) => {
   if ((boardHeight * boardWidth) % 2 !== 0)
     return alert("Ilość kart musi być parzysta")
 
-  if (boardHeight * boardWidth > 36)
+  if (boardHeight * boardWidth > 37)
     return alert("Maksymalna liczba kart to 36")
 
   if (boardHeight * boardWidth < 4) return alert("Minimalna liczba kart to 4")
@@ -128,9 +128,11 @@ startBtn.addEventListener("click", (e) => {
     boardHolder.insertAdjacentHTML("beforeend", row)
     for (let j = 0; j < boardWidth; j++) {
       const element = `
-      <div class="card card-${i * boardWidth + j}">
+      <div class="card card-${i * boardWidth + j} ${
+        cardsOnStart === 36 ? "smaller-card" : ""
+      }">
         <div class="front">
-          <img src="./assets/reversed.png" alt="reversed card" />
+          <img src="./assets/reversed.png" alt="reversed card " />
         </div>
         <div class="back">
           <img src="./assets/${images.pop()}.png" alt="" />
